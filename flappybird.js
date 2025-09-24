@@ -29,9 +29,14 @@ let topPipeImg;
 let bottomPipeImg;
 
 //audio
-let flapSound = new Audio("flap.mp3");
-let scoreSound = new Audio("score.mp3");
-let hitSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\Sheeesh.mp3");
+let bgmusic = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\Legend of Zelda.mp3");
+bgmusic.loop = true;
+bgmusic.volume = 0.2;
+bgmusic.play();
+let flapSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\flap.mp3");
+let scoreSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\score.mp3");
+let hitSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\BlamsNudes.mp3");
+let dieSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\Sheeesh.mp3");
 
 //physics
 let velocityX = -2;   // pipes moving left speed
@@ -238,6 +243,7 @@ function detectCollision(a, b) {
     a.y + a.height > b.y
   );
 }
+
 
 
 
