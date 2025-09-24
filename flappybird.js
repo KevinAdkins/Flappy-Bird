@@ -28,6 +28,11 @@ let pipeY = 0;
 let topPipeImg;
 let bottomPipeImg;
 
+//audio
+let flapSound = new Audio("flap.mp3");
+let scoreSound = new Audio("score.mp3");
+let hitSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\Sheeesh.mp3");
+
 //physics
 let velocityX = -2;   // pipes moving left speed
 let velocityY = 0;    // bird vertical speed
@@ -233,6 +238,7 @@ function detectCollision(a, b) {
     a.y + a.height > b.y
   );
 }
+
 
 
 
