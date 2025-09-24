@@ -31,7 +31,7 @@ let bottomPipeImg;
 //physics
 let velocityX = -2;   // pipes moving left speed
 let velocityY = 0;    // bird vertical speed
-let gravity  = 0.32;  // gravity affecting bird
+let gravity  = 0.4;  // gravity affecting bird
 let maxFall  = 6.5;   // max falling speed
 
 // game state / scoring
@@ -214,7 +214,7 @@ function moveBird(e) {
       // allow flap to restart immediately
       resetGame();
     }
-    velocityY = 50; // jump strength
+    velocityY = -15; // jump strength
   }
 }
 
@@ -233,6 +233,7 @@ function detectCollision(a, b) {
     a.y + a.height > b.y
   );
 }
+
 
 
 
