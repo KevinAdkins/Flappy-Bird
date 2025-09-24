@@ -29,85 +29,14 @@ let topPipeImg;
 let bottomPipeImg;
 
 //audio
-let bgmusic = null;
-let flapSound = null;
-let scoreSound = null;
-let hitSound = null;
-let dieSound = null;
-
-function loadAudio() {
-  try {
-    bgmusic = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\Legend of Zelda.mp3");
-    bgmusic.loop = true;
-    bgmusic.volume = 0.2;
-  } catch (e) {
-    console.warn("Could not create background music audio:", e);
-    bgmusic = null;
-  }
-
-  try {
-    flapSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\flap.mp3");
-  } catch (e) {
-    console.warn("Could not create flap sound:", e);
-    flapSound = null;
-  }
-
-  try {
-    scoreSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\score.mp3");
-  } catch (e) {
-    console.warn("Could not create score sound:", e);
-    scoreSound = null;
-  }
-
-  try {
-    hitSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\BlamsNudes.mp3");
-  } catch (e) {
-    console.warn("Could not create hit sound:", e);
-    hitSound = null;
-  }
-
-  try {
-    dieSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\pufferfish.ogg");
-  } catch (e) {
-    console.warn("Could not create die sound:", e);
-    dieSound = null;
-  }
-}
-
-function playBackgroundMusic() {
-  if (!bgmusic) return;
-  // most browsers require user interaction before playback; 
-  const p = bgmusic.play();
-  if (p && typeof p.then === 'function') p.catch(() => {});
-}
-
-function stopBackgroundMusic() {
-  if (!bgmusic) return;
-  try {
-    bgmusic.pause();
-    bgmusic.currentTime = 0;
-  } catch (e) {
-    console.warn('Error stopping bgmusic', e);
-  }
-}
-
-function playOneShot(sound) {
-  // create a clone so overlapping sounds can play
-  if (!sound) return;
-  try {
-    const s = sound.cloneNode ? sound.cloneNode() : new Audio(sound.src);
-    s.volume = sound.volume != null ? sound.volume : 1.0;
-    const p = s.play();
-    if (p && typeof p.then === 'function') p.catch(() => {});
-  } catch (e) {
-    console.warn('playOneShot failed', e);
-  }
-}
-
-function playFlapSound() { playOneShot(flapSound); }
-function playScoreSound() { playOneShot(scoreSound); }
-function playHitSound() { playOneShot(hitSound); }
-function playDieSound() { playOneShot(dieSound); }
+let bgmusic = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\Legend of Zelda.mp3");
+bgmusic.loop = true;
+bgmusic.volume = 0.2;
+bgmusic.play();
+let flapSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\flap.mp3");
+let scoreSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\score.mp3");
+let hitSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\BlamsNudes.mp3");
+let dieSound = new Audio("C:\\Users\\Blamb\\Downloads\\Sounds\\Sheeesh.mp3");
 
 //physics
 let velocityX = -2;   // pipes moving left speed
@@ -125,7 +54,7 @@ function updateScoreUI() {
   document.getElementById("best").textContent  = `Best: ${best}`;
 }
 
-// handle high-DPI (retina) displays;
+// dpi scaling
 function setupDevicePixelRatio() {
   const dpr = Math.max(1, window.devicePixelRatio || 1);
   // set backing store to DPR-scaled size
@@ -159,9 +88,6 @@ window.onload = function () {
 
   requestAnimationFrame(update);
   setInterval(placePipes, 1500); // place pipes every 1.5 seconds
-
-  // load audio assets (does not force autoplay)
-  loadAudio();
 
   // keyboard controls
   document.addEventListener("keydown", moveBird);
@@ -214,14 +140,10 @@ function update() {
         pipe.passed = true;
         score++;
         updateScoreUI();
-        // play scoring sound
-        playScoreSound();
       }
 
       // collision
       if (detectCollision(bird, pipe)) {
-        // play hit sound before ending
-        playHitSound();
         endGame();
       }
     }
@@ -247,10 +169,6 @@ function endGame() {
   if (gameOver) return;
   gameOver = true;
 
-  // stop or play die sound and update best score
-  playDieSound();
-  stopBackgroundMusic();
-
   if (score > best) {
     best = score;
     localStorage.setItem("best", String(best));
@@ -270,9 +188,6 @@ function resetGame() {
 
   // reset pipes
   pipeArray = [];
-
-  // resume background music when game restarts if available
-  playBackgroundMusic();
 
   updateScoreUI();
 }
@@ -310,9 +225,6 @@ function moveBird(e) {
       resetGame();
     }
     velocityY = -8; // jump strength
-    // play flap sound and ensure background music starts after first user interaction
-    playFlapSound();
-    playBackgroundMusic();
   }
 }
 
@@ -321,9 +233,6 @@ function onPointerDown(e) {
   e.preventDefault(); // prevent scroll/zoom on touch
   if (gameOver) resetGame();
   velocityY = -8;
-  // play flap sound + ensure bg music starts after user interaction
-  playFlapSound();
-  playBackgroundMusic();
 }
 
 function detectCollision(a, b) {
