@@ -44,11 +44,24 @@ function updateScoreUI() {
   document.getElementById("best").textContent  = `Best: ${best}`;
 }
 
+// (optional) make rendering sharp on high-DPI screens while keeping logical size
+function setupDevicePixelRatio() {
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  // set backing store to DPR-scaled size
+  game.width  = gameWidth * dpr;
+  game.height = gameHeight * dpr;
+  // keep CSS (layout) size in logical pixels
+  game.style.width  = gameWidth + "px";
+  game.style.height = gameHeight + "px";
+  // scale drawing so our coordinates remain logical
+  context.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
 window.onload = function () {
   game = document.getElementById("game");
   context = game.getContext("2d");
-  game.width = gameWidth;
-  game.height = gameHeight;
+
+  setupDevicePixelRatio(); // comment out if you don't want DPR scaling
 
   // load images
   birdImag = new Image();
@@ -66,7 +79,19 @@ window.onload = function () {
   requestAnimationFrame(update);
   setInterval(placePipes, 1500); // place pipes every 1.5 seconds
 
+  // keyboard controls
   document.addEventListener("keydown", moveBird);
+  // prevent page from scrolling when using Space/ArrowUp
+  document.addEventListener(
+    "keydown",
+    (e) => {
+      if (["Space", "ArrowUp"].includes(e.code)) e.preventDefault();
+    },
+    { passive: false }
+  );
+
+  // mobile/desktop tap support (pointer covers mouse + touch)
+  game.addEventListener("pointerdown", onPointerDown, { passive: false });
 
   // restart button + R key
   document.getElementById("restart").addEventListener("click", resetGame);
@@ -89,8 +114,8 @@ function update() {
     bird.y = Math.max(bird.y + velocityY, 0); // don't go above the canvas
 
     // ground collision (game over)
-    if (bird.y + bird.height >= game.height) {
-      bird.y = game.height - bird.height;
+    if (bird.y + bird.height >= gameHeight) {
+      bird.y = gameHeight - bird.height;
       endGame();
     }
 
@@ -126,7 +151,7 @@ function update() {
   if (gameOver) {
     context.fillStyle = "white";
     context.font = "45px sans-serif";
-    context.fillText("GAME OVER", 50, game.height / 2 - 20);
+    context.fillText("GAME OVER", 50, gameHeight / 2 - 20);
   }
 }
 
@@ -161,7 +186,7 @@ function placePipes() {
   if (gameOver) return;
 
   const randomPipeY = pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2); // top pipe y
-  const openingSpace = game.height / 4; // gap size
+  const openingSpace = gameHeight / 4; // gap size
 
   const topPipe = {
     img: topPipeImg,
@@ -191,6 +216,13 @@ function moveBird(e) {
     }
     velocityY = -8; // jump strength
   }
+}
+
+// Tap/click to flap; if game over, tap restarts
+function onPointerDown(e) {
+  e.preventDefault();           // prevent scroll/zoom on touch
+  if (gameOver) resetGame();
+  velocityY = -8;
 }
 
 function detectCollision(a, b) {
