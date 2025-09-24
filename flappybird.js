@@ -44,16 +44,16 @@ function updateScoreUI() {
   document.getElementById("best").textContent  = `Best: ${best}`;
 }
 
-// (optional) make rendering sharp on high-DPI screens while keeping logical size
+//  sharp DPI rendering
 function setupDevicePixelRatio() {
   const dpr = Math.max(1, window.devicePixelRatio || 1);
   // set backing store to DPR-scaled size
   game.width  = gameWidth * dpr;
   game.height = gameHeight * dpr;
-  // keep CSS (layout) size in logical pixels
+  // keep CSS size in logical pixels
   game.style.width  = gameWidth + "px";
   game.style.height = gameHeight + "px";
-  // scale drawing so our coordinates remain logical
+  // scale drawing so coordinates remain logical
   context.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
@@ -113,7 +113,7 @@ function update() {
     velocityY = Math.min(velocityY, maxFall); // cap fall speed
     bird.y = Math.max(bird.y + velocityY, 0); // don't go above the canvas
 
-    // ground collision (game over)
+    // ground collision
     if (bird.y + bird.height >= gameHeight) {
       bird.y = gameHeight - bird.height;
       endGame();
@@ -147,7 +147,7 @@ function update() {
   // draw bird (kept outside so it shows on GAME OVER frame too)
   context.drawImage(birdImag, bird.x, bird.y, bird.width, bird.height);
 
-  // optional GAME OVER overlay
+  // GAME OVER overlay
   if (gameOver) {
     context.fillStyle = "white";
     context.font = "45px sans-serif";
@@ -233,3 +233,4 @@ function detectCollision(a, b) {
     a.y + a.height > b.y
   );
 }
+
