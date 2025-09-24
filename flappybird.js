@@ -224,7 +224,7 @@ function moveBird(e) {
       // allow flap to restart immediately
       resetGame();
     }
-    velocityY = -8; // jump strength
+    velocityY = -10; // jump strength
   }
 }
 
@@ -243,3 +243,4 @@ function detectCollision(a, b) {
     a.y + a.height > b.y
   );
 }
+
